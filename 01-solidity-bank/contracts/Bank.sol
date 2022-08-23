@@ -4,17 +4,33 @@ pragma solidity ^0.8.6;
 import "hardhat/console.sol";
 
 contract Bank{
-    uint totalContractBalance = 0;
-
-    function getContractBalance() public view returns(uint){
-        return totalContractBalance;
-    }
+    address contractAddress = address(this);
+    uint contractBalance = address(this).balance;
 
     mapping (address => uint) balancesMapping;
 
-    function addBalance() public payable{
+    receive() external payable {
         uint amountOfSend = msg.value;
         balancesMapping[msg.sender] = amountOfSend;
-        totalContractBalance = totalContractBalance + amountOfSend;
     }
+
+    function getSender(address _addr) public view returns(uint){
+        console.log(balancesMapping[_addr]);
+        return balancesMapping[_addr];
+    }
+
+    function getContractBalance() public view returns(address){
+        console.log(contractAddress, contractBalance);
+        return contractAddress;
+    }
+
+
+   
+
+    function balanceOf(address _addr) public view returns(uint){
+        console.log(_addr.balance);
+        return _addr.balance;
+    }
+
+    
 }

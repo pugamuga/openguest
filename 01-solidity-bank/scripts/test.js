@@ -7,7 +7,7 @@ const main = async () => {
   const bankFactory = await hre.ethers.getContractFactory("Bank", acc2);
   const bankDeploy = await bankFactory.deploy();
 
-  await bankDeploy.getContractBalance("ahuet', o5 vse rabotaet!");
+  await bankDeploy.connect(acc1).addBalance({value: "0.0001"})
 };
 
 const runMain = async () => {
