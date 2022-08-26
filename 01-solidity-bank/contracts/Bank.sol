@@ -13,24 +13,4 @@ contract Bank{
         uint amountOfSend = msg.value;
         balancesMapping[msg.sender] = amountOfSend;
     }
-
-    function getSender(address _addr) public view returns(uint){
-        console.log(balancesMapping[_addr]);
-        return balancesMapping[_addr];
-    }
-
-    function getContractBalance() public view returns(address){
-        console.log(contractAddress, contractBalance);
-        return contractAddress;
-    }
-
-
-   
-
-    function balanceOf(address _addr) public view returns(uint){
-        console.log(_addr.balance);
-        return _addr.balance;
-    }
-
-    
 }
