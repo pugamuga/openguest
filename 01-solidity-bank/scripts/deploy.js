@@ -13,16 +13,30 @@ const main = async () => {
 
   console.log("Bank contract was deployed:", bankDeploy.address);
 
+  // balance of acc1
   const bal = await ethers.provider.getBalance(acc1.address);
-  console.log(bal);
+  console.log("balance of acc1", bal);
 
+  // balance of contract
+  const contractBalance1 = await ethers.provider.getBalance(bankDeploy.address);
+  console.log("balance of contrac", contractBalance1);
+
+  //create transaction from acc1 to contract address
   const transaction = await acc1.sendTransaction({
     to: bankDeploy.address,
-    value: ethers.utils.parseEther("1.0"),
+    value: ethers.utils.parseEther("0.5"),
   });
 
+  // balance of acc1 after transaction
   const bal1 = await ethers.provider.getBalance(acc1.address);
-  console.log(bal1);
+  console.log("balance of acc1 after transaction", bal1);
+
+  // balance of contract after transaction
+  const contractBalance = await ethers.provider.getBalance(bankDeploy.address);
+  console.log("balance of contract after transaction", contractBalance);
+
+  const comission = (Number(bal) - Number(bal1) - Number(transaction.value))/Number(transaction.value);
+  console.log("comission", comission,"ETH");
 };
 
 const runMain = async () => {

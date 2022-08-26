@@ -13,4 +13,13 @@ contract Bank{
         uint amountOfSend = msg.value;
         balancesMapping[msg.sender] = amountOfSend;
     }
+
+    function getMapping(address _addr) public view returns(uint){
+        return balancesMapping[_addr];
+    }
+
+    function justTest() public pure returns(uint){
+        uint _num = 10;
+        return _num;
+    }
 }
