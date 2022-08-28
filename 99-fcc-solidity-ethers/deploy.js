@@ -22,6 +22,7 @@ const main = async () => {
   console.log(retrieve.toString());
 
   const store = await contract.store(3);
+  await store.wait(1)
 
   const retrieve1 = await contract.retrieve();
   console.log(retrieve1.toString());
