@@ -1,31 +1,46 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
-const hre = require("hardhat");
+const { ethers, run } = require("hardhat");
+require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-etherscan");
 
-async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+const main = async () => {
+  const storageFactory = await ethers.getContractFactory("SimpleStorage");
+  console.log("Deploying...");
+  const contract = await storageFactory.deploy();
+  const contractDeployed = await contract.deployed();
+  console.log(`Contract deployed on this address: ${contract.address}`);
+  console.log(`Wait 6 blocks confirmations...`);
+  await contract.deployTransaction.wait(6);
+  await verify(contract.address, []);
 
-  const lockedAmount = hre.ethers.utils.parseEther("1");
+  const firstRetrieve = await contract.retrieve();
+  console.log(`Current number is: ${firstRetrieve}`);
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const store = await contract.store(5);
+  await store.wait(1)
 
-  await lock.deployed();
+  const secondRetrieve = await contract.retrieve();
+  console.log(`Current number is: ${secondRetrieve}`);
+};
 
-  console.log(
-    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  );
-}
+const verify = async (contractAddress, args) => {
+  try {
+    console.log(`Verifying contract...`);
+    await run("verify:verify", {
+      address: contractAddress,
+      constructorArguments: args,
+    });
+  } catch (error) {
+    if (error.message.toLowerCase().includes("already verified")) {
+      console.log("Contract already verified");
+    } else {
+      console.log(error);
+    }
+  }
+};
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.log(`Error: ${error}`);
+    process.exit(1);
+  });
