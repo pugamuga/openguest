@@ -1,5 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomiclabs/hardhat-etherscan");
+require("./Tasks/block-number")
 const dotenv = require("dotenv");
 dotenv.config();
 
